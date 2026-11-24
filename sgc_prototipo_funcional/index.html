@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CINEGESTÃO — Painel Administrativo (SGC)</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <!-- Cabeçalho superior fiel aos protótipos -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <span class="brand">CINEGESTÃO</span>
+      <span class="subtitle" id="topbar-subtitle">Painel administrativo</span>
+    </div>
+    <div class="topbar-right">
+      <label for="perfil-ativo" class="sr-only">Perfil ativo</label>
+      <select id="perfil-ativo" class="role-select" title="Alternar perfil logado para testar permissões">
+        <option value="Administrador" selected>Administrador ▾</option>
+        <option value="Gerente">Gerente ▾</option>
+        <option value="Programação">Programação ▾</option>
+        <option value="Atendente">Atendente (Sem permissão) ▾</option>
+      </select>
+    </div>
+  </header>
+
+  <div class="layout">
+    <!-- Menu lateral contendo somente as 4 telas solicitadas no documento -->
+    <aside class="sidebar">
+      <nav aria-label="Telas do sistema">
+        <button class="nav-item active" data-screen="usuarios">Usuários</button>
+        <button class="nav-item" data-screen="filmes">Filmes</button>
+        <button class="nav-item" data-screen="salas">Salas</button>
+        <button class="nav-item" data-screen="sessoes">Sessões</button>
+      </nav>
+    </aside>
+
+    <!-- Área principal -->
+    <main class="content">
+      <div id="global-alert" class="alert hidden" role="alert"></div>
+
+      <!-- ========================================================= -->
+      <!-- TELA 1: CADASTRO DE FUNCIONÁRIO (135358.png)              -->
+      <!-- ========================================================= -->
+      <section id="screen-usuarios" class="screen-section active">
+        <h1>Cadastro de funcionário</h1>
+
+        <div id="usuarios-bloqueio" class="card blocked-box hidden">
+          <h2>Acesso negado</h2>
+          <p>Somente usuário autorizado poderá cadastrar ou manter funcionários.</p>
+        </div>
+
+        <div id="usuarios-conteudo">
+          <form id="form-funcionario" class="card form-card" novalidate>
+            <input type="hidden" id="func-id" />
+            <div class="grid-2">
+              <div class="form-group">
+                <label for="func-nome">Nome</label>
+                <input type="text" id="func-nome" placeholder="" />
+                <small class="field-error" id="err-func-nome"></small>
+              </div>
+
+              <div class="form-group">
+                <label for="func-email">E-mail</label>
+                <input type="email" id="func-email" placeholder="" />
+                <small class="field-error" id="err-func-email"></small>
+              </div>
+
+              <div class="form-group">
+                <label for="func-perfil">Perfil</label>
+                <select id="func-perfil">
+                  <option value="">Selecione</option>
+                  <option value="Administrador">Administrador</option>
+                  <option value="Gerente">Gerente</option>
+                  <option value="Programação">Programação</option>
+                  <option value="Atendente">Atendente</option>
+                  <option value="Portaria">Portaria</option>
+                </select>
+                <small class="field-error" id="err-func-perfil"></small>
+              </div>
+
+              <div class="form-group">
+                <label for="func-senha">Senha inicial</label>
+                <input type="password" id="func-senha" placeholder="••••••••" />
+                <small class="field-error" id="err-func-senha"></small>
+              </div>
+
+              <div class="form-group">
+                <label for="func-situacao">Situação</label>
+                <select id="func-situacao">
+                  <option value="Ativo" selected>Ativo</option>
+                  <option value="Inativo">Inativo</option>
+                </select>
+                <small class="field-error" id="err-func-situacao"></small>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="button" id="btn-func-cancelar" class="btn btn-secondary">Cancelar</button>
+              <button type="submit" class="btn btn-primary">Salvar</button>
+            </div>
+          </form>
+
+          <div class="card list-card">
+            <h2>Funcionários cadastrados</h2>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>E-mail</th>
+                  <th>Perfil</th>
+                  <th>Situação</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="tabela-funcionarios"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================= -->
+      <!-- TELA 2: CADASTRO DE FILME (135359.png)                    -->
+      <!-- ========================================================= -->
+      <section id="screen-filmes" class="screen-section">
+        <h1>Cadastro de filme</h1>
+
+        <form id="form-filme" class="card form-card" novalidate>
+          <input type="hidden" id="filme-id" />
+          <div class="grid-3-custom">
+            <div class="form-group span-2">
+              <label for="filme-titulo">Título</label>
+              <input type="text" id="filme-titulo" maxlength="150" />
+              <small class="field-error" id="err-filme-titulo"></small>
+            </div>
+
+            <div class="form-group">
+              <label for="filme-genero">Gênero</label>
+              <select id="filme-genero">
+                <option value="">Selecione ▾</option>
+                <option value="Ação">Ação</option>
+                <option value="Aventura">Aventura</option>
+                <option value="Comédia">Comédia</option>
+                <option value="Drama">Drama</option>
+                <option value="Ficção Científica">Ficção Científica</option>
+                <option value="Suspense">Suspense</option>
+                <option value="Terror">Terror</option>
+              </select>
+              <small class="field-error" id="err-filme-genero"></small>
+            </div>
+
+            <div class="form-group">
+              <label for="filme-duracao">Duração</label>
+              <input type="text" id="filme-duracao" placeholder="120 min" />
+              <small class="field-error" id="err-filme-duracao"></small>
+            </div>
+          </div>
+
+          <div class="grid-3">
+            <div class="form-group">
+              <label for="filme-classificacao">Classificação</label>
+              <select id="filme-classificacao">
+                <option value="">Selecione ▾</option>
+                <option value="Livre">Livre</option>
+                <option value="10">10</option>
+                <option value="12">12</option>
+                <option value="14">14</option>
+                <option value="16">16</option>
+                <option value="18">18</option>
+              </select>
+              <small class="field-error" id="err-filme-classificacao"></small>
+            </div>
+
+            <div class="form-group">
+              <label for="filme-idioma">Idioma original</label>
+              <input type="text" id="filme-idioma" />
+              <small class="field-error" id="err-filme-idioma"></small>
+            </div>
+
+            <div class="form-group">
+              <label for="filme-estreia">Data de estreia</label>
+              <input type="text" id="filme-estreia" placeholder="dd/mm/aaaa" maxlength="10" />
+              <small class="field-error" id="err-filme-estreia"></small>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="filme-sinopse">Sinopse</label>
+            <input type="text" id="filme-sinopse" maxlength="2000" />
+            <small class="field-error" id="err-filme-sinopse"></small>
+          </div>
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label for="filme-direcao">Direção</label>
+              <input type="text" id="filme-direcao" />
+              <small class="field-error" id="err-filme-direcao"></small>
+            </div>
+
+            <div class="form-group">
+              <label for="filme-elenco">Elenco</label>
+              <input type="text" id="filme-elenco" />
+              <small class="field-error" id="err-filme-elenco"></small>
+            </div>
+
+            <div class="form-group">
+              <label for="filme-trailer">URL do trailer</label>
+              <input type="text" id="filme-trailer" placeholder="https://..." />
+              <small class="field-error" id="err-filme-trailer"></small>
+            </div>
+
+            <div class="form-group">
+              <label for="filme-cartaz">Cartaz / imagem</label>
+              <input type="text" id="filme-cartaz" placeholder="cartaz.jpg ou cartaz.png" />
+              <small class="field-error" id="err-filme-cartaz"></small>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" id="btn-filme-cancelar" class="btn btn-secondary">Cancelar</button>
+            <button type="submit" class="btn btn-primary">Salvar</button>
+          </div>
+        </form>
+
+        <div class="card list-card">
+          <h2>Filmes cadastrados</h2>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Título</th>
+                <th>Gênero</th>
+                <th>Duração</th>
+                <th>Classificação</th>
+                <th>Idioma</th>
+                <th>Situação</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="tabela-filmes"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ========================================================= -->
+      <!-- TELA 3: CADASTRO DE SALA (135360.png)                     -->
+      <!-- ========================================================= -->
+      <section id="screen-salas" class="screen-section">
+        <h1>Cadastro de sala</h1>
+
+        <form id="form-sala" class="card form-card" novalidate>
+          <input type="hidden" id="sala-id" />
+          <div class="grid-3-sala">
+            <div class="form-group">
+              <label for="sala-identificacao">Identificação</label>
+              <input type="text" id="sala-identificacao" placeholder="Ex.: Sala 03" maxlength="30" />
+              <small class="field-error" id="err-sala-identificacao"></small>
+            </div>
+
+            <div class="form-group">
+              <label for="sala-tipo">Tipo</label>
+              <select id="sala-tipo">
+                <option value="Convencional" selected>Convencional ▾</option>
+                <option value="VIP">VIP</option>
+                <option value="3D">3D</option>
+                <option value="IMAX">IMAX</option>
+              </select>
+              <small class="field-error" id="err-sala-tipo"></small>
+            </div>
+
+            <div class="form-group">
+              <label for="sala-capacidade">Capacidade</label>
+              <input type="number" id="sala-capacidade" min="1" />
+              <small class="field-error" id="err-sala-capacidade"></small>
+            </div>
+
+            <div class="form-group">
+              <label for="sala-fileiras">Fileiras</label>
+              <input type="number" id="sala-fileiras" min="1" max="26" />
+              <small class="field-error" id="err-sala-fileiras"></small>
+            </div>
+
+            <div class="form-group">
+              <label for="sala-assentos-fileira">Assentos por fileira</label>
+              <input type="number" id="sala-assentos-fileira" min="1" max="30" />
+              <small class="field-error" id="err-sala-assentos-fileira"></small>
+            </div>
+
+            <div class="form-group">
+              <label for="sala-situacao">Situação</label>
+              <select id="sala-situacao">
+                <option value="Ativa" selected>Ativa ▾</option>
+                <option value="Inativa">Inativa</option>
+                <option value="Manutenção">Manutenção</option>
+              </select>
+              <small class="field-error" id="err-sala-situacao"></small>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Recursos</label>
+            <div class="checkbox-row">
+              <label class="checkbox-label"><input type="checkbox" name="sala-recursos" value="3D" /> 3D</label>
+              <label class="checkbox-label"><input type="checkbox" name="sala-recursos" value="IMAX" /> IMAX</label>
+              <label class="checkbox-label"><input type="checkbox" name="sala-recursos" value="VIP" /> VIP</label>
+              <label class="checkbox-label"><input type="checkbox" name="sala-recursos" value="Acessibilidade" /> Acessibilidade</label>
+            </div>
+          </div>
+
+          <div class="preview-box">
+            <div class="preview-title">Prévia do mapa de assentos</div>
+            <div id="mapa-assentos-preview" class="seat-map"></div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Salvar</button>
+          </div>
+        </form>
+
+        <div class="card list-card">
+          <h2>Salas cadastradas</h2>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Identificação</th>
+                <th>Tipo</th>
+                <th>Capacidade</th>
+                <th>Layout</th>
+                <th>Recursos</th>
+                <th>Situação</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="tabela-salas"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ========================================================= -->
+      <!-- TELA 4: CADASTRO DE SESSÃO (135361.png)                   -->
+      <!-- ========================================================= -->
+      <section id="screen-sessoes" class="screen-section">
+        <h1>Cadastro de sessão</h1>
+
+        <form id="form-sessao" class="card form-card" novalidate>
+          <input type="hidden" id="sessao-id" />
+          <div class="grid-3-sessao">
+            <div class="form-group">
+              <label for="sessao-filme">Filme</label>
+              <select id="sessao-filme">
+                <option value="">Selecione o filme ▾</option>
+              </select>
+              <small class="field-error" id="err-sessao-filme"></small>
+            </div>
+
+            <div class="form-group">
+              <label for="sessao-sala">Sala</label>
+              <select id="sessao-sala"></select>
+              <small class="field-error" id="err-sessao-sala"></small>
+            </div>
+
+            <div class="form-group">
+              <label for="sessao-data">Data</label>
+              <input type="text" id="sessao-data" value="24/08/2026" placeholder="dd/mm/aaaa" maxlength="10" />
+              <small class="field-error" id="err-sessao-data"></small>
+            </div>
+          </div>
+
+          <div class="grid-4">
+            <div class="form-group">
+              <label for="sessao-horario">Horário</label>
+              <input type="text" id="sessao-horario" value="20:00" placeholder="HH:mm" maxlength="5" />
+              <small class="field-error" id="err-sessao-horario"></small>
+            </div>
+
+            <div class="form-group">
+              <label for="sessao-idioma">Idioma</label>
+              <select id="sessao-idioma">
+                <option value="Dublado" selected>Dublado ▾</option>
+                <option value="Legendado">Legendado</option>
+                <option value="Original">Original</option>
+              </select>
+              <small class="field-error" id="err-sessao-idioma"></small>
+            </div>
+
+            <div class="form-group">
+              <label for="sessao-formato">Formato</label>
+              <select id="sessao-formato">
+                <option value="2D" selected>2D ▾</option>
+                <option value="3D">3D</option>
+                <option value="IMAX">IMAX</option>
+              </select>
+              <small class="field-error" id="err-sessao-formato"></small>
+            </div>
+
+            <div class="form-group">
+              <label for="sessao-preco">Preço-base</label>
+              <input type="text" id="sessao-preco" value="R$ 32,00" />
+              <small class="field-error" id="err-sessao-preco"></small>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Resumo da sessão</label>
+            <div class="summary-box">
+              <div class="summary-main" id="resumo-linha-1">Selecione o filme • Sala 2 • 24/08/2026 às 20:00</div>
+              <div class="summary-sub" id="resumo-linha-2">Dublado • 2D • Capacidade: 120 lugares</div>
+              <div class="summary-status ok" id="resumo-status">Nenhum conflito de horário identificado.</div>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" id="btn-sessao-salvar">Criar sessão</button>
+          </div>
+        </form>
+
+        <div class="card list-card">
+          <h2>Sessões cadastradas</h2>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Filme</th>
+                <th>Sala</th>
+                <th>Data</th>
+                <th>Horário</th>
+                <th>Idioma / Formato</th>
+                <th>Preço-base</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="tabela-sessoes"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Scripts separados por responsabilidade -->
+  <script src="js/storage.js"></script>
+  <script src="js/validators.js"></script>
+  <script src="js/funcionarios.js"></script>
+  <script src="js/filmes.js"></script>
+  <script src="js/salas.js"></script>
+  <script src="js/sessoes.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
